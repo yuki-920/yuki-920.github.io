@@ -21,13 +21,12 @@
       padding: 32px;
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      width: 320px;
+      width: 360px;
       text-align: center;
     }
 
     h1 {
       margin-top: 0;
-      font-size: 24px;
     }
 
     .date {
@@ -39,6 +38,12 @@
       font-size: 48px;
       font-weight: bold;
       color: #0078ff;
+    }
+
+    .info {
+      margin-top: 20px;
+      font-size: 18px;
+      line-height: 1.8;
     }
 
     .bar {
@@ -69,28 +74,43 @@
     <div class="bar">
       <div class="fill" id="fill"></div>
     </div>
+
+    <div class="info">
+      <div id="elapsed"></div>
+      <div id="remaining"></div>
+    </div>
   </div>
 
   <script>
-    function isLeapYear(year) {
-      return (
-        (year % 4 === 0 && year % 100 !== 0) ||
-        year % 400 === 0
-      );
-    }
-
     function calculateYearProgress() {
       const now = new Date();
 
       const year = now.getFullYear();
 
+      // 今年の開始
       const start = new Date(year, 0, 1);
-      const end = new Date(year + 1, 0, 1);
 
-      const elapsed = now - start;
-      const total = end - start;
+      // 来年の開始
+      const nextYear = new Date(year + 1, 0, 1);
 
-      const percent = (elapsed / total) * 100;
+      // 1日のミリ秒
+      const oneDay = 1000 * 60 * 60 * 24;
+
+      // 経過日数
+      const elapsedDays =
+        Math.floor((now - start) / oneDay) + 1;
+
+      // 総日数
+      const totalDays =
+        Math.floor((nextYear - start) / oneDay);
+
+      // 残り日数
+      const remainingDays =
+        totalDays - elapsedDays;
+
+      // 進行率
+      const percent =
+        (elapsedDays / totalDays) * 100;
 
       document.getElementById("date").textContent =
         now.toLocaleDateString("ja-JP");
@@ -100,6 +120,12 @@
 
       document.getElementById("fill").style.width =
         percent + "%";
+
+      document.getElementById("elapsed").textContent =
+        `1月1日から ${elapsedDays} 日経過`;
+
+      document.getElementById("remaining").textContent =
+        `12月31日まで あと ${remainingDays}/${totalDays} 日`;
     }
 
     calculateYearProgress();
